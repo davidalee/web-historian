@@ -26,14 +26,26 @@ exports.handleRequest = function (req, res) {
   }
 
   if(req.method === 'POST'){
-    req.on('data', function(content){
+    var data = '';
+    var filePath = archive.paths.siteAssets + req.url;
 
-      archive.addUrlToList(content, function(){});
+    req.on('data', function(chunk){
+      data = data + chunk;
     });
+
+    req.on('end', function(){
+      var regex = /www.\w+.com/;
+      archive.addUrlToList(data.match(regex), function(){});
+    });
+
     helper.serveAssets(res, filePath, function(){
-      res.end();}, 'POST');
-  
+      res.end();
+    }, 'POST');
 }
+
+// If users submit a page you already have, you should auto-redirect them to
+// either your archived version of that page, or to `loading.html` if the page
+// has not yet been loaded.
   // request
   //           .post("/")
   //           .send({ url: url })
