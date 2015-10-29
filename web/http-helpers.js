@@ -10,12 +10,16 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.serveAssets = function(res, asset, callback) {
+exports.serveAssets = function(res, asset, callback, method) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
   
   fs.readFile(asset, function(error, content) {
+    if(method === 'POST'){
+      res.writeHead(302, headers);
+      callback(res, content);
+    }
     if( !content ){
       res.writeHead(404, headers);
       callback(res, 'You requested a non-existent site, fool!');

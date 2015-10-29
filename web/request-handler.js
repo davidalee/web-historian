@@ -9,7 +9,7 @@ exports.handleRequest = function (req, res) {
 
   if(req.method === 'GET'){
     if(req.url === "/"){
-      var filePath = archive.paths.siteAssets + req.rul;
+      var filePath = archive.paths.siteAssets + req.url;
       if(req.url === "/"){
         filePath = archive.paths.siteAssets + '/index.html';
       }
@@ -26,10 +26,23 @@ exports.handleRequest = function (req, res) {
   }
 
   if(req.method === 'POST'){
-    
-  }
+    req.on('data', function(content){
 
-
+      archive.addUrlToList(content, function(){});
+    });
+    helper.serveAssets(res, filePath, function(){
+      res.end();}, 'POST');
+  
+}
+  // request
+  //           .post("/")
+  //           .send({ url: url })
 
   //res.end(archive.paths.list);
 };
+
+
+
+// from townhall... re: cron + echo-ing
+// echo "running" + $data >> /Users/fred/cronlog
+// 40 8 * * * /bin/bash -l -c 'cd /path/to/toolbox && git pull -q'

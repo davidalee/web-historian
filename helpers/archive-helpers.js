@@ -24,33 +24,41 @@ exports.initialize = function(pathsObj){
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
+var sites;
+
+fs.readFile(this.paths.list, 'UTF-8', function (error, urlList) {
+  sites = urlList.split('\n');
+});
 
 exports.readListOfUrls = function(callback){
-  fs.readFile(this.paths.list, 'UTF-8', function (error, urlList) {
-    callback(urlList.split('\n'));
-  });
+  callback(sites);
 };
 
 exports.isUrlInList = function(targetURL,callback){
-  // set up a checker - false
-  // save list of urls from exports.readListOfUrls to a variable
-  // loop using forEach
-  // if item === targetURL
-  // checker = true;
-  // callback(checker)
+  var result = false;
+  sites.forEach(function(index, item){
+    if(item === targetURL){
+      result = true;
+    }
+  });
+  callback(result);
 };
 
-exports.addUrlToList = function(){
-  //fs.appendFile
-  //callback();
-
+exports.addUrlToList = function(targetURL, callback){
+  fs.appendFile(this.paths.list, "\n" + targetURL);
+  callback();
 };
 
-exports.isUrlArchived = function(){
-  //set up a var equal to the fs.readdir(jkfsla;ejkl);
-  //checker = false
-  //use indexOf, if equals to -1 or if length === 0, checker = true;
-  //callback(checker)
+exports.isUrlArchived = function(targetURL, callback){
+  var archived = fs.readdir(this.paths.archivedSites, function(error, urlList){
+    var result = false;
+    if(urlList.length > 0){
+      if(urlList.indexOf(targetURL) !== -1){
+        result = true;
+      }
+    }
+    callback(result);
+  })
 };
 
 exports.downloadUrls = function(){
